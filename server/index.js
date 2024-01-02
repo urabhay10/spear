@@ -3,10 +3,12 @@ const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const grammarRoutes = require('./routes/grammarRoute');
+const bardRoutes = require('./routes/bardRoute');
 app.use(cors());
 app.use(bodyParser.json());
 
 app.use('/grammar', grammarRoutes);
+app.use('/ai', bardRoutes);
 
 app.use((error, req, res, next) => {
   console.error('Error:', error);

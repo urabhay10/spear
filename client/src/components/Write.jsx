@@ -4,6 +4,7 @@ import Navbar from './Navbar'
 import StoryBoard from './StoryBoard'
 import ActivityBar from './ActivityBar'
 import GrammarBoard from './GrammarBoard'
+import AIChat from './AIChat'
 
 export default class Write extends Component {
     constructor(props) {
@@ -64,7 +65,11 @@ export default class Write extends Component {
             <div>
                 <Navbar />
                 <ActivityBar getGrammarErrors={this.getGrammarErrors} setActiveBoard={this.setActiveBoard}/>
-                {this.state.activeBoard === 'story' ? <StoryBoard /> : this.state.activeBoard==='grammar'?<GrammarBoard correctedText={this.state.correctedText} getGrammarErrors={this.getGrammarErrors} setText={this.setText} text={this.state.text}/>:<></>}
+                {this.state.activeBoard === 'story' ? 
+                    <StoryBoard /> : 
+                    this.state.activeBoard==='grammar'?
+                    <GrammarBoard correctedText={this.state.correctedText} getGrammarErrors={this.getGrammarErrors} setText={this.setText} text={this.state.text}/>:
+                    <AIChat/>}
                 <TextEditor setText={this.setText} text={this.state.text} correctedText={this.state.correctedText}/>
             </div>
         )

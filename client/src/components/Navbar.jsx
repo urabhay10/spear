@@ -94,17 +94,12 @@ class Navbar extends React.Component {
             })
           }
         </div>
-        <div style={userInfoStyle} className="user-info">
-          <span style={usernameStyle} className="username">
-            Abhay Upadhyay
-          </span>
-          <img
-            style={avatarStyle}
-            src="https://via.placeholder.com/30"
-            alt="User Avatar"
-            className="avatar"
-          />
-        </div>
+        <Loading
+          ballColors={['orange', 'orange','orange']}
+          backgroundColor={'white'}
+          height={70}
+          width={100}
+        />
       </div>)
     else return (
       <div style={navbarStyle} className="navbar">
