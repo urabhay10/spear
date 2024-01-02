@@ -9,7 +9,11 @@ class TextEditor extends React.Component {
     };
     this.divRef = React.createRef(); // Create a ref for the contentEditable div
   }
-
+  componentDidUpdate(){
+    if(this.props.text !== this.divRef.current.value){
+      this.divRef.current.value = this.props.text;
+    }
+  }
   handleTitleChange = (e) => {
     this.setState({ title: e.target.value });
   };
@@ -76,6 +80,7 @@ class TextEditor extends React.Component {
         />*/}
       <textarea
       spellCheck="true"
+      autoFocus={true}
       ref={this.divRef}
       placeholder={placeholder}
       onInput={this.handleInputChange}

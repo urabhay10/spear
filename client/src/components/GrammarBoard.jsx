@@ -5,8 +5,9 @@ export default class GrammarBoard extends Component {
     handleRefresh = () => {
         this.props.getGrammarErrors();
     }
+    
     render() {
-        const { correctedText} = this.props;
+        const { correctedText } = this.props;
         return (
             <div
                 style={{
@@ -33,13 +34,13 @@ export default class GrammarBoard extends Component {
                         flexDirection: 'row',
                         justifyContent: 'space-between',
                         width: '100%',
-                        height: '10vh',
+                        height: 'fit-content',
                     }}
                 >
                     <div
                         style={{
                             width: '90%',
-                            height: '10vh',
+                            height: 'fit-content',
                             textAlign: 'center',
                         }}
                     >
@@ -48,14 +49,40 @@ export default class GrammarBoard extends Component {
                     <div
                         style={{
                             width: '10%',
-                            height: '10vh',
+                            height: 'fit-content',
                             textAlign: 'center',
                             cursor: 'pointer',
+                            padding: '5px'
                         }}
                         onClick={this.handleRefresh}
                     >
                         <FiRefreshCw size={20} />
                     </div>
+                </div>
+                <div style={{
+                    width: '100%',
+                    height: 'fit-content',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+
+                }}>
+                    <button
+                        style={{
+                            width: '90%',
+                            height: 'fit-content',
+                            textAlign: 'center',
+                            cursor: 'pointer',
+                            backgroundColor: '#FF8C00',
+                            color: 'white',
+                            border: 'none',
+                            fontSize: '1em',
+                            fontWeight: 'bold',
+                        }}
+                        onClick={() => { this.props.setText(correctedText.toString()) }}
+                    >
+                        Accept changes
+                    </button>
                 </div>
                 <div
                     style={{
@@ -65,9 +92,29 @@ export default class GrammarBoard extends Component {
                         paddingLeft: '10px',
                         overflowY: 'auto',
                         overflowX: 'hidden',
+                        marginTop: '10px'
                     }}
                 >
-                    {correctedText.toString()}
+                    {/* {correctedText.toString()} */}
+                    {
+                        correctedText && this.props.text
+                            ? correctedText.toString().split(' ').map((word, index) => {
+                                const originalTextWords = this.props.text.toString().split(' ');
+                                return (
+                                    <span
+                                        style={{
+                                            color:
+                                                originalTextWords.length > index && word === originalTextWords[index]
+                                                    ? 'white'
+                                                    : 'red',
+                                        }}
+                                    >
+                                        {word + ' '}
+                                    </span>
+                                );
+                            })
+                            : null 
+                    }
                 </div>
                 
             </div>

@@ -37,7 +37,7 @@ export default class Write extends Component {
             console.log(text);
             console.log(data);
             const rightText = await this.filterText(text, data)
-            this.setState({ correctedText: rightText });
+            this.setState({ correctedText: rightText});
         } catch (error) {
             console.error('Error:', error);
         }
@@ -64,7 +64,7 @@ export default class Write extends Component {
             <div>
                 <Navbar />
                 <ActivityBar getGrammarErrors={this.getGrammarErrors} setActiveBoard={this.setActiveBoard}/>
-                {this.state.activeBoard === 'story' ? <StoryBoard /> : this.state.activeBoard==='grammar'?<GrammarBoard correctedText={this.state.correctedText} getGrammarErrors={this.getGrammarErrors}/>:<></>}
+                {this.state.activeBoard === 'story' ? <StoryBoard /> : this.state.activeBoard==='grammar'?<GrammarBoard correctedText={this.state.correctedText} getGrammarErrors={this.getGrammarErrors} setText={this.setText} text={this.state.text}/>:<></>}
                 <TextEditor setText={this.setText} text={this.state.text} correctedText={this.state.correctedText}/>
             </div>
         )
