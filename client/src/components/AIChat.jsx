@@ -92,7 +92,7 @@ export default class AIChat extends Component {
                     >
                         <FaArrowLeft />
                     </span>}
-                    {this.state.currentViewing!==this.state.prompts.length?<span>{this.state.currentViewing + 1}/{this.state.prompts.length}</span>:<span>Enter a prompt</span>}
+                    {this.state.currentViewing!==this.state.prompts.length?<span>{this.state.currentViewing + 1}/{this.state.prompts.length}</span>:<span>Ask a question</span>}
                     {this.state.currentViewing!==this.state.prompts.length?<span style={{
                         right: 0,
                         position: 'absolute',
@@ -102,12 +102,12 @@ export default class AIChat extends Component {
 
                     ><FaArrowRight /></span>:<></>}
                 </div>
-                <div className="sent-chat">
+               {this.state.currentViewing!==this.state.prompts.length && <><div className="sent-chat">
                     <ChatContainer text={this.state.prompts[this.state.currentViewing]} prompt/>
                 </div>
                 <div className="received-chat">
                     <ChatContainer text={this.state.responses[this.state.currentViewing]} />
-                </div>
+                </div></>}
 
                 {this.state.currentViewing === this.state.prompts.length && <><textarea style={{
                     width: '12vw',

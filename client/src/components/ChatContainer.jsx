@@ -8,6 +8,7 @@ export default class ChatContainer extends Component {
         };
     }
     render() {
+        const formattedText = this.props.text.replace(/\*\*(.*?)\*\*/g, (match, p1) => `<strong>${p1}</strong>`).replace(/\*(.*?)\*/g, (match, p1) => `<i>${p1}</i>`)        
         return (
             <div style={{
                 backgroundColor: this.props.prompt?'yellow':'blue',
@@ -17,8 +18,10 @@ export default class ChatContainer extends Component {
                 margin: '0.1vw',
                 textAlign: 'center',
                 color: this.props.prompt?'black':'white',
-            }}>
-                {this.props.text}
+                fontWeight: 'auto',
+            }}
+            dangerouslySetInnerHTML={{__html: formattedText}}
+            >
             </div>
         )
     }
