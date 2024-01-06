@@ -1,0 +1,174 @@
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap");
+
+
+.body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #111;
+    width: 100%;
+    overflow: hidden;
+    font-family: "Quicksand", sans-serif;
+}
+
+.signup-ring {
+    position: relative;
+    box-sizing: border-box;
+    width: 500px;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.signup-ring i {
+    position: absolute;
+    inset: 0;
+    border: 2px solid #fff;
+    transition: 0.5s;
+    box-sizing: border-box;
+}
+
+.signup-ring i:nth-child(1) {
+    box-sizing: border-box;
+    border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+    /* animation: animate 6s linear infinite; */
+}
+
+.signup-ring i:nth-child(2) {
+    border-radius: 41% 44% 56% 59%/38% 62% 63% 37%;
+    box-sizing: border-box;
+    /* animation: animate 4s linear infinite; */
+}
+
+.signup-ring i:nth-child(3) {
+    border-radius: 41% 44% 56% 59%/38% 62% 63% 37%;
+    box-sizing: border-box;
+    /* animation: animate2 10s linear infinite; */
+}
+
+.signup-ring:hover i {
+    border: 6px solid var(--clr);
+    filter: drop-shadow(0 0 20px var(--clr));
+    box-sizing: border-box;
+}
+
+@keyframes animate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes animate2 {
+    0% {
+        transform: rotate(360deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+.login {
+    margin: 0;
+    position: absolute;
+    width: 300px;
+    font-family: "Quicksand", sans-serif;
+    box-sizing: border-box;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.login h2 {
+    font-size: 2em;
+    color: #fff;
+    box-sizing: border-box;
+}
+
+.login .inputBx {
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: "Quicksand", sans-serif;
+}
+
+.login .inputBx input {
+    position: relative;
+    width: 100%;
+    padding: 12px 20px;
+    background: transparent;
+    border: 2px solid #fff;
+    border-radius: 40px;
+    font-size: 1.2em;
+    color: #fff;
+    box-shadow: none;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.login .inputBx input[type="submit"] {
+    width: 100%;
+    background: #0078ff;
+    background: linear-gradient(45deg, #a1ff35, #fff172);
+    border: none;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.login .inputBx input::placeholder {
+    color: rgba(255, 255, 255, 0.75);
+    box-sizing: border-box;
+}
+
+.login .inputBx button {
+    position: relative;
+    width: 100%;
+    padding: 12px 20px;
+    background: transparent;
+    border: 2px solid #fff;
+    border-radius: 40px;
+    font-size: 1.2em;
+    box-sizing: border-box;
+    color: #000;
+    box-shadow: none;
+    outline: none;
+}
+
+.login .inputBx button[type="submit"] {
+    width: 100%;
+    background: #0078ff;
+    background: linear-gradient(45deg, #a1ff35, #fff172);
+    border: none;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.login .inputBx button::placeholder {
+    color: rgba(255, 255, 255, 0.75);
+    box-sizing: border-box;
+}
+
+.login .links {
+    position: relative;
+    width: 100%;
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+.login .links a {
+    color: #fff;
+    text-decoration: none;
+    box-sizing: border-box;
+}
