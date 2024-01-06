@@ -13,6 +13,20 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true
+  },
+  contents: {
+    type: [{
+      uniquieId: {
+        type: String,
+        required: false
+      },
+    }],
+    required: false
+  },
+  plan: {
+    type: Number,
+    required: false,
+    default: 0
   }
 });
 

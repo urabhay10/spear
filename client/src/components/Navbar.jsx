@@ -7,7 +7,7 @@ class Navbar extends React.Component {
     super(props);
     this.state = {
       randFonts: this.getRandomFonts(),
-      isLoading: true
+      isLoading: this.props.loading
     };
   }
   fonts = [
@@ -20,18 +20,28 @@ class Navbar extends React.Component {
   ];
 
   componentDidMount() {
-    const changeFontInterval = setInterval(() => {
+    this.changeFontInterval = setInterval(() => {
       this.setState({
         randFonts: this.getRandomFonts(),
       });
     }, 350);
-    setTimeout(() => {
-      clearInterval(changeFontInterval);
-      this.setState({
-        randFonts: ['inherit', 'inherit', 'inherit', 'inherit', 'inherit'],
-        isLoading: false
-      });
-    }, 2800);
+  }
+  componentDidUpdate(prevProps) {
+    if (prevProps.loading === true) {
+      if (this.props.loading === false) {
+        clearInterval(this.changeFontInterval);
+        this.setState({
+          isLoading: false,
+          randFonts: [  
+            'inherit',
+            'inherit',
+            'inherit',
+            'inherit',
+            'inherit'
+          ]
+        })
+      }
+    }
   }
   getRandomFonts() {
     return [
@@ -82,7 +92,7 @@ class Navbar extends React.Component {
     if (this.state.isLoading) return (
       <div style={navbarStyle} className="navbar">
         <Loading
-          ballColors={['orange', 'orange','orange']}
+          ballColors={['orange', 'orange', 'orange']}
           backgroundColor={'white'}
           height={70}
           width={100}
@@ -95,7 +105,7 @@ class Navbar extends React.Component {
           }
         </div>
         <Loading
-          ballColors={['orange', 'orange','orange']}
+          ballColors={['orange', 'orange', 'orange']}
           backgroundColor={'white'}
           height={70}
           width={100}

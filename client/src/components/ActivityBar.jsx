@@ -11,21 +11,34 @@ class VerticalBar extends React.Component {
     super(props);
     this.state = {
       activeTab: 0,
-      tabsUnactive: [bookIconGrey, brainIconGrey,grammarIconGrey],
-      tabsActive: [bookIconWhite, brainIconWhite,grammarIconWhite],
+      tabsUnactive: [bookIconGrey, brainIconGrey, grammarIconGrey],
+      tabsActive: [bookIconWhite, brainIconWhite, grammarIconWhite],
+      isClickPending: false,
     };
   }
 
   handleTabClick = (index) => {
-    if (index === 0) {
-      this.props.setActiveBoard('story');
-    } else if (index === 2) {
-      this.props.setActiveBoard('grammar');
-      this.props.getGrammarErrors();
-    } else if (index === 1) {
-      this.props.setActiveBoard('ai');
+    if (this.state.isClickPending) {
+      return;
     }
-    this.setState({ activeTab: index });
+    this.setState({ isClickPending: true })
+    setTimeout(() => {
+      this.setState({ isClickPending: false });
+    }, 300);
+    if (index === this.state.activeTab) {
+      this.props.setActiveBoard('');
+      this.setState({ activeTab: -1 });
+    } else {
+      if (index === 0) {
+        this.props.setActiveBoard('story');
+      } else if (index === 2) {
+        this.props.setActiveBoard('grammar');
+        this.props.getGrammarErrors();
+      } else if (index === 1) {
+        this.props.setActiveBoard('ai');
+      }
+      this.setState({ activeTab: index });
+    }
   };
 
   render() {
@@ -64,7 +77,7 @@ class VerticalBar extends React.Component {
             >
               <img alt='' src={index === this.state.activeTab ? tab : this.state.tabsUnactive[index]} style={{ height: '80%', width: '80%', margin: '10%' }} />
             </div>
-          );  
+          );
         })}
       </div>
     );

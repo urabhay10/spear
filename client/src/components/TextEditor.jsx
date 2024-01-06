@@ -4,25 +4,27 @@ class TextEditor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      title: 'Saviours: Tales of the nails',
       placeholder: 'Beginning of a new story',
     };
-    this.divRef = React.createRef(); // Create a ref for the contentEditable div
+    this.divRef = React.createRef();
   }
-  componentDidUpdate(){
-    if(this.props.text !== this.divRef.current.value){
+  componentDidMount() {
+    this.divRef.current.selectionStart = this.divRef.current.value.length;
+  }
+  componentDidUpdate() {
+    if (this.props.text !== this.divRef.current.value) {
       this.divRef.current.value = this.props.text;
     }
   }
   handleTitleChange = (e) => {
+    const { setTitle } = this.props;
+    setTitle(e.target.value);
     this.setState({ title: e.target.value });
   };
-
   handleInputChange = (e) => {
     const { setText } = this.props;
     setText(e.target.value);
   };
-
   handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       this.adjustDivHeight();
@@ -38,31 +40,30 @@ class TextEditor extends React.Component {
   };
 
   render() {
-    const { title, placeholder } = this.state;
+    const { placeholder } = this.state;
     return (
       <div style={{
-        width: '80vw',
+        width: this.props.activeBoard === '' ? '96vw' : '80vw',
         position: 'absolute',
-        left: '20vw',
+        left: this.props.activeBoard === '' ? '4vw' : '20vw',
         top: '70px',
       }}>
-        {/* Title Input Section */}
         <div style={{ textAlign: 'center', marginBottom: '0', position: 'relative', width: '100%', right: '0px' }}>
           <input
             type="text"
-            value={title}
+            value={this.props.title}
             onChange={this.handleTitleChange}
             style={{ fontSize: '1.5em', fontWeight: 'bold', border: 'none', textAlign: 'left', width: '100%', outline: 'none', fontFamily: "'Poppins',sans-serif", }}
           />
         </div>
-
-        {/* ContentEditable Div Section */}
-        {/* <div
+        <textarea
+          spellCheck="true"
+          autoFocus={true}
           ref={this.divRef}
-          contentEditable="true"
           placeholder={placeholder}
-          // onInput={this.handleInputChange}
+          onInput={this.handleInputChange}
           onKeyDown={this.handleKeyDown}
+          value={this.props.text}
           style={{
             width: '98%',
             border: 'none',
@@ -77,30 +78,8 @@ class TextEditor extends React.Component {
             minHeight: '100vh',
           }}
           className="text-input"
-        />*/}
-      <textarea
-      spellCheck="true"
-      autoFocus={true}
-      ref={this.divRef}
-      placeholder={placeholder}
-      onInput={this.handleInputChange}
-      onKeyDown={this.handleKeyDown}
-      style={{
-        width: '98%',
-        border: 'none',
-        padding: '1%',
-        position: 'absolute',
-        right: '0',
-        resize: 'none',
-        overflowY: 'auto',
-        outline: 'none',
-        backgroundColor: '#333333',
-        color: '#ffffff',
-        minHeight: '100vh',
-      }}
-      className="text-input"
-      />
-    </div>
+        />
+      </div>
     );
   }
 }

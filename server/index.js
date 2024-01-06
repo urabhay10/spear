@@ -5,9 +5,11 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const User = require('./models/User')
+const Content = require('./models/Content')
 const grammarRoutes = require('./routes/grammarRoute');
 const bardRoutes = require('./routes/bardRoute');
 const userRoutes = require('./routes/userRoute');
+const contentRoutes = require('./routes/contentRoute');
 const session = require('express-session');
 const passport = require('passport');
 const server = require('http').createServer(app);
@@ -27,11 +29,13 @@ passport.use(User.createStrategy())
 passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
 
+
 mongoose.connect('mongodb://127.0.0.1:27017/spear')
 
 app.use('/grammar', grammarRoutes);
 app.use('/ai', bardRoutes);
 app.use('/user', userRoutes);
+app.use('/content', contentRoutes);
 
 app.use((error, req, res, next) => {
   console.error('Error:', error);
