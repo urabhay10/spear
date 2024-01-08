@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Navigate } from 'react-router-dom'
 import TextEditor from './TextEditor'
 import Navbar from './Navbar'
 import StoryBoard from './StoryBoard'
@@ -21,8 +22,31 @@ export default class Write extends Component {
             content: '',
             description: '',
             genre: '',
-            loading: true
+            loading: true,
+            user: '',
+            redirect: false
         };
+    }
+    createNovel = async () => {
+        try {
+            this.setState({ loading: true })
+            const response = await fetch('http://localhost:8000/content/create-novel/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+
+                }),
+            })
+            const data = await response.json()
+            console.log(data)
+            this.setState({ title: data.title, chapters: data.chapters, type: data.type, uniqueId: data.uniqueId, content: data.content, description: data.description, genre: data.genre })
+            this.setState({ loading: false })
+        } catch (error) {
+            console.error('Error:', error);
+        }
     }
     setText = (text) => {
         const { activeChapter, chapters } = this.state;
@@ -88,88 +112,124 @@ export default class Write extends Component {
         console.log("righttext:" + rightText);
         return rightText
     }
-    setActiveBoard = (board) => {
-        this.setState({ activeBoard: board })
-        
-    }
-    async componentDidMount() {
-        try {
-            const params = { uniqueId: 'k9v3vmtk3k7zg' }
-            const Query = new URLSearchParams(Object.entries(params)).toString();
-            const response = await fetch(`http://localhost:8000/content/get-content/?${Query}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `${localStorage.getItem('token')}`
-                },
-            })
-            const data = await response.json()
-            console.log(data)
-            this.setState({ title: data.title, chapters: data.chapters, type: data.type, uniqueId: data.uniqueId, content: data.content, description: data.description, genre: data.genre })
-            this.setState({ loading: false })
-        } catch (error) {
-            console.error('Error:', error);
-        }
-        setInterval(async () => {
-            await fetch('http://localhost:8000/content/update-novel/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify({
-                    title: this.state.title,
-                    chapters: this.state.chapters,
-                    type: this.state.type,
-                    uniqueId: this.state.uniqueId,
-                    content: this.state.content,
-                    description: this.state.description,
-                    genre: this.state.genre
-                }),
-            })
-        }, 5000);
-    }
-    render() {
-        return (
-            <div>
-                <Navbar
-                    loading={this.state.loading}
-                />
-                <ActivityBar
-                    getGrammarErrors={this.getGrammarErrors}
-                    setActiveBoard={this.setActiveBoard}
-                    activeBoard={this.state.activeBoard}
-                />
-                {this.state.activeBoard === 'story' ?
+    renderExplorer() {
+        const { activeBoard, uniqueId, chapters, activeChapter, title, genre, correctedText } = this.state;
+
+        switch (activeBoard) {
+            case 'story':
+                return uniqueId !== '' ? (
                     <StoryBoard
-                        chapters={this.state.chapters}
-                        activeChapter={this.state.activeChapter}
-                        title={this.state.title}
-                        genre={this.state.genre}
+                        chapters={chapters}
+                        activeChapter={activeChapter}
+                        title={title}
+                        genre={genre}
                         setActiveChapter={(index) => this.setState({ activeChapter: index })}
                         addChapter={this.addChapter}
                         deleteChapter={this.deleteChapter}
                         changeMainTitle={this.changeHeadTitle}
-                    /> :
-                    this.state.activeBoard === 'grammar' ?
-                        <GrammarBoard
-                            correctedText={this.state.correctedText}
-                            getGrammarErrors={this.getGrammarErrors}
-                            setText={this.setText}
-                            text={this.state.chapters ? this.state.chapters[this.state.activeChapter]?.content : ''}
-                        /> :
-                        this.state.activeBoard === 'ai' ?
-                            <AIChat /> : <></>}
-                {!this.state.loading && <TextEditor
-                    setText={this.setText}
-                    setTitle={this.setTitle}
-                    text={this.state.chapters[this.state.activeChapter]?.content}
-                    correctedText={this.state.correctedText}
-                    title={this.state.chapters ? this.state.chapters[this.state.activeChapter]?.title : ''}
-                    content={this.state.chapters ? this.state.chapters[this.state.activeChapter]?.content : ''}
-                    activeBoard={this.state.activeBoard}
-                />}
-            </div>
-        )
+                    />
+                ) : null;
+
+            case 'grammar':
+                return <GrammarBoard correctedText={correctedText} getGrammarErrors={this.getGrammarErrors} setText={this.setText} text={chapters ? chapters[activeChapter]?.content : ''} />;
+
+            case 'ai':
+                return <AIChat />;
+
+            default:
+                return null;
+        }
+    }
+    setActiveBoard = (board) => {
+        this.setState({ activeBoard: board })
+
+    }
+    async componentDidMount() {
+        try {
+            const token = localStorage.getItem('token')
+            if (!token) {
+                this.setState({ redirect: true })
+                return;
+            }
+            else {
+                const response = await fetch('http://localhost:8000/user/profile', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `${localStorage.getItem('token')}`
+                    },
+                })
+                const data = await response.json()
+                this.setState({ user: data.fullname, uniqueId: data.contents.length > 0 ? data.contents[0].uniqueId :''})
+            }
+            setTimeout(async () => {
+                const params = { uniqueId: this.state.uniqueId }
+                const Query = new URLSearchParams(Object.entries(params)).toString();
+                const response = await fetch(`http://localhost:8000/content/get-content/?${Query}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `${localStorage.getItem('token')}`
+                    },
+                })
+                const data = await response.json()
+                console.log(data)
+                if (data.message === 'Content not found' || data.error === 'Content retrieval failed') {
+                    console.log('unable to get the content')
+                    this.setState({ loading: false })
+                } else {
+                    this.setState({ title: data.title, chapters: data.chapters, type: data.type, uniqueId: data.uniqueId, content: data.content, description: data.description, genre: data.genre })
+                    this.setState({ loading: false })
+                }
+                setInterval(async () => {
+                    await fetch('http://localhost:8000/content/update-novel/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `${localStorage.getItem('token')}`
+                        },
+                        body: JSON.stringify({
+                            title: this.state.title,
+                            chapters: this.state.chapters,
+                            type: this.state.type,
+                            uniqueId: this.state.uniqueId,
+                            content: this.state.content,
+                            description: this.state.description,
+                            genre: this.state.genre
+                        }),
+                    })
+                }, 5000);
+            }, 100);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+    render() {
+        if (this.state.redirect) { return <Navigate to="/login" /> } else {
+            return (
+                <div>
+                    <Navbar
+                        loading={this.state.loading}
+                        user={this.state.user}
+                        createNovel={this.createNovel}
+                    />
+                    <ActivityBar
+                        getGrammarErrors={this.getGrammarErrors}
+                        setActiveBoard={this.setActiveBoard}
+                        activeBoard={this.state.activeBoard}
+                    />
+                    {this.renderExplorer()}
+                    {!this.state.loading && this.state.chapters.length && <TextEditor
+                        setText={this.setText}
+                        setTitle={this.setTitle}
+                        text={this.state.chapters[this.state.activeChapter]?.content}
+                        correctedText={this.state.correctedText}
+                        title={this.state.chapters ? this.state.chapters[this.state.activeChapter]?.title : ''}
+                        content={this.state.chapters ? this.state.chapters[this.state.activeChapter]?.content : ''}
+                        activeBoard={this.state.activeBoard}
+                    />}
+                </div>
+            )
+        }
     }
 }

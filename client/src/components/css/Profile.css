@@ -1,0 +1,114 @@
+.body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #111;
+    width: 100%;
+    overflow: hidden;
+    font-family: "Quicksand", sans-serif;
+}
+
+.profile-ring {
+    position: relative;
+    box-sizing: border-box;
+    width: 500px;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-ring i {
+    position: absolute;
+    inset: 0;
+    border: 2px solid #fff;
+    transition: 0.5s;
+    box-sizing: border-box;
+}
+
+.profile-ring i:nth-child(1) {
+    box-sizing: border-box;
+    border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+    animation: animate 6s linear infinite;
+}
+
+.profile-ring i:nth-child(2) {
+    border-radius: 40% 60% 65% 35% / 45% 50% 55% 40%;
+    box-sizing: border-box;
+    animation: animate 4s linear infinite;
+}
+
+.profile-ring i:nth-child(3) {
+    border-radius: 45% 48% 60% 65%/35% 55% 65% 30%;
+    box-sizing: border-box;
+    animation: animate2 10s linear infinite;
+}
+
+.profile-ring i:nth-child(4) {
+    border-radius: 40% 50% 55% 60%/30% 65% 70% 35%;
+    box-sizing: border-box;
+    animation: animate2 10s linear infinite;
+}
+
+.profile-ring:hover i {
+    border: 6px solid var(--clr);
+    filter: drop-shadow(0 0 20px var(--clr));
+    box-sizing: border-box;
+}
+
+@keyframes animate {
+
+    0% {
+        transform: rotate(0deg);
+        border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+    }
+
+    25% {
+        transform: rotate(90deg);
+        border-radius: 40% 60% 65% 35% / 45% 50% 55% 40%;
+    }
+
+    50% {
+        transform: rotate(180deg);
+        border-radius: 45% 48% 60% 65%/35% 55% 65% 30%;
+    }
+
+    75% {
+        transform: rotate(270deg);
+        border-radius: 40% 50% 55% 60%/30% 65% 70% 35%;
+    }
+
+    100% {
+        transform: rotate(360deg);
+        border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+    }
+}
+
+@keyframes animate2 {
+
+    0% {
+        transform: rotate(0deg);
+        border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+    }
+
+    25% {
+        transform: rotate(90deg);
+        border-radius: 40% 60% 65% 35% / 45% 50% 55% 40%;
+    }
+
+    50% {
+        transform: rotate(180deg);
+        border-radius: 45% 48% 60% 65%/35% 55% 65% 30%;
+    }
+
+    75% {
+        transform: rotate(270deg);
+        border-radius: 40% 50% 55% 60%/30% 65% 70% 35%;
+    }
+
+    100% {
+        transform: rotate(360deg);
+        border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+    }
+}

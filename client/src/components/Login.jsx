@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Link, Navigate} from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import './css/Login.css'
 
 export default class Login extends Component {
@@ -9,10 +9,14 @@ export default class Login extends Component {
       spanElements: [],
       email: '',
       password: '',
-      redirect: false
+      redirect: false,
+      error: false
     };
   }
   componentDidMount() {
+    if(localStorage.getItem('token')){
+      this.setState({redirect: true})
+    }
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         this.handleLogin();
@@ -32,11 +36,16 @@ export default class Login extends Component {
         }),
       });
       const data = await response.json();
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      this.setState({ redirect: true });
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        this.setState({ redirect: true });
+        return;
+      }else{
+        this.setState({ error: true });
+      }
     } catch (error) {
       console.log(error);
+      this.setState({ error: true });
     }
   }
 
@@ -58,8 +67,18 @@ export default class Login extends Component {
               <div className="inputBx">
                 <input type="password" placeholder="Password" required value={this.state.password} onInput={(e) => { this.setState({ password: e.target.value }) }} />
               </div>
+              <div style={{
+                color: 'red',
+                fontSize: '0.8em',
+                textAlign: 'center',
+                visibility: this.state.error ? 'visible' : 'hidden'
+              }}>
+                Invalid password or email
+              </div>
               <div className="inputBx">
-                <button type="submit">Login</button>
+                <button type="submit" onClick={()=>{
+                  this.handleLogin()
+                }}>Login</button>
               </div>
               <div className="links">
                 <Link to='/signup'>Signup</Link>

@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
   },
   contents: {
     type: [{
-      uniquieId: {
+      uniqueId: {
         type: String,
         required: false
       },

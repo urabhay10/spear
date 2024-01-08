@@ -11,9 +11,14 @@ export default class Login extends Component {
       password: '',
       fullname: '',
       redirect: false,
+      error: false,
+      errormessage: ''
     };
   }
   componentDidMount() {
+    if(localStorage.getItem('token')){
+      this.setState({redirect: true})
+    }
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         this.handleSignup();
@@ -22,7 +27,12 @@ export default class Login extends Component {
   }
   async handleSignup() {
     try {
-      const response = await fetch('http://localhost:8000/user/signup', {
+      if(this.state.email === '' || this.state.password.length === '' || this.state.fullname === '') {
+        this.setState({ error: true, errormessage: 'Please fill out all fields' });
+        console.log('here')
+        return;
+      }
+      const response = await fetch('http://localhost:8000/user/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -35,7 +45,6 @@ export default class Login extends Component {
       });
       const data = await response.json();
       localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
       this.setState({ redirect: true });
     } catch (error) {
       console.log(error);
@@ -58,10 +67,18 @@ export default class Login extends Component {
                 <input type="text" placeholder="Email" required value={this.state.email} onInput={(e) => { this.setState({ email: e.target.value }) }} />
               </div>
               <div className="inputBx">
-                <input type="text" placeholder="Full Name" required value={this.state.email} onInput={(e) => { this.setState({ email: e.target.value }) }} />
+                <input type="text" placeholder="Full Name" required value={this.state.fullname} onInput={(e) => { this.setState({ fullname: e.target.value }) }} />
               </div>
               <div className="inputBx">
                 <input type="password" placeholder="Password" required value={this.state.password} onInput={(e) => { this.setState({ password: e.target.value }) }} />
+              </div>
+              <div style={{
+                width: '100%',
+                color: 'red'
+              }}>
+                {this.state.error ? <p style={{
+                  color: 'red'
+                }}>{this.state.errormessage}</p> : null}
               </div>
               <div className="inputBx">
                 <button type="submit">Sign up</button>

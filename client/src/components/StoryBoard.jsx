@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { TiDeleteOutline as DeleteIcon } from 'react-icons/ti'
-import { IoMdAddCircleOutline as AddIcon } from "react-icons/io";
 
 export default class StoryBoard extends Component {
     constructor(props) {
@@ -57,7 +56,7 @@ export default class StoryBoard extends Component {
                     />
                 </div>
 
-                {chapters.map((chapter, index) => {
+                {chapters?.map((chapter, index) => {
                     return (
                         <div
                             style={{
@@ -105,7 +104,17 @@ export default class StoryBoard extends Component {
                 }}
                     onClick={() => addChapter('', '')}
                 >
-                    <AddIcon />
+                    <span style={{
+                        border: 'none',
+                        //semi transparent blue
+                        background: 'rgba(251, 192, 147, 0.5)',
+                        color: '#ffffff',
+                        fontSize: '1em',
+                        width: '100%',
+                        textAlign: 'center',
+                        outline: 'none',
+                        padding: '2px',
+                    }}>Add chapter</span>
                 </div>
             </div>
 

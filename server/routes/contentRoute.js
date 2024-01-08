@@ -2,24 +2,29 @@ const express = require('express');
 const router = express.Router();
 require('dotenv').config();
 const jwtMiddleware = require('../middleware/jwtMiddleware');
+const User = require('../models/User');
 const Content = require('../models/Content');
 const mongoose = require('mongoose');
+const {v4: uuidv4} = require('uuid');
 
 router.post('/create-novel', jwtMiddleware, async (req, res) => {
-    //10 letter unique id 
-    const generatedId = Math.random().toString(36).substring(2, 15);
+    const generatedId = uuidv4();
     try {
         const newContent = new Content({
-            title: req.body.title,
+            title: "Title",
             type: "Novel",
-            description: req.body.description,
-            chapters: req.body.chapters,
+            chapters: [],
             uniqueId: generatedId,
-            content: req.body.content
+            content: req.body.content || ""
         });
         const savedContent = await newContent.save();
+        console.log(savedContent)
+        const user = req.user
+        user.contents.push({ uniqueId: generatedId });
+        await user.save();
         res.status(201).json(savedContent);
     } catch (error) {
+        console.error(error)
         res.status(500).json({ error: 'Content creation failed' });
     }
 });
@@ -27,13 +32,13 @@ router.post('/create-novel', jwtMiddleware, async (req, res) => {
 router.post('/update-novel', jwtMiddleware, async (req, res) => {
     try {
         const givenChapters = req.body.chapters;
-        const updatedChapters = givenChapters.map(chapter => {
+        const updatedChapters = givenChapters?.map(chapter => {
             if (!chapter._id) {
                 chapter._id = new mongoose.Types.ObjectId();
             }
             return chapter;
         });
-        const filteredChapters = updatedChapters.filter(chapter => chapter.title !== "");
+        const filteredChapters = updatedChapters?.filter(chapter => chapter.title !== "");
         const updatedContent = await Content.updateOne(
             { uniqueId: req.body.uniqueId },
             {
@@ -45,6 +50,16 @@ router.post('/update-novel', jwtMiddleware, async (req, res) => {
                 }
             }
         );
+        const user = await User.findById(req.user._id);
+        const uniqueIdToMove = req.body.uniqueId;
+        if (user.contents.length > 0) {
+            const existingIndex = user.contents.findIndex(content => content.uniqueId === uniqueIdToMove);
+            if (existingIndex !== 0 && existingIndex !== -1) {
+                user.contents.splice(existingIndex, 1);
+                user.contents.unshift({ uniqueId: uniqueIdToMove });
+                await user.save();
+            }
+        }
         res.status(201).json(updatedContent);
     } catch (error) {
         console.error(error);
@@ -55,8 +70,28 @@ router.post('/update-novel', jwtMiddleware, async (req, res) => {
 router.get('/get-content', jwtMiddleware, async (req, res) => {
     try {
         const content = await Content.findOne({ uniqueId: req.query.uniqueId });
+        if (!content) {
+            return res.status(404).json({ message: 'Content not found' });
+        }
         res.status(200).json(content);
     } catch (error) {
+        res.status(500).json({ error: 'Content retrieval failed' });
+    }
+});
+
+router.post('/get-all-content', jwtMiddleware, async (req, res) => {
+    try {
+        const contentArray = new Array();
+        for (const uniqueId of req.body.uniqueIds) {
+            const content = await Content.findOne({ uniqueId: uniqueId.uniqueId });
+            if (!content) {
+                return res.status(404).json({ message: 'Content not found' });
+            }
+            contentArray.push(content);
+        }
+        res.status(200).json(contentArray);
+    } catch (error) {
+        console.error(error);
         res.status(500).json({ error: 'Content retrieval failed' });
     }
 });

@@ -32,7 +32,7 @@ class Navbar extends React.Component {
         clearInterval(this.changeFontInterval);
         this.setState({
           isLoading: false,
-          randFonts: [  
+          randFonts: [
             'inherit',
             'inherit',
             'inherit',
@@ -82,13 +82,13 @@ class Navbar extends React.Component {
     };
 
     const usernameStyle = {
-      marginRight: '10px',
-    };
-
-    const avatarStyle = {
-      borderRadius: '50%',
       marginRight: '2vw',
     };
+
+    // const avatarStyle = {
+    //   borderRadius: '50%',
+    //   marginRight: '2vw',
+    // };
     if (this.state.isLoading) return (
       <div style={navbarStyle} className="navbar">
         <Loading
@@ -114,9 +114,10 @@ class Navbar extends React.Component {
     else return (
       <div style={navbarStyle} className="navbar">
         <div className="nav-links">
-          <span style={navItemStyle}>Note</span>
-          <span style={navItemStyle}>Story</span>
-          <span style={navItemStyle}>Novel</span>
+          <span
+            style={navItemStyle}
+            onClick={() => this.props.createNovel()}
+          >New Novel</span>
         </div>
         <div style={brandStyle} className="brand">
           {
@@ -127,14 +128,14 @@ class Navbar extends React.Component {
         </div>
         <div style={userInfoStyle} className="user-info">
           <span style={usernameStyle} className="username">
-            Abhay Upadhyay
+            {this.props.user}
           </span>
-          <img
+          {/* <img
             style={avatarStyle}
             src="https://via.placeholder.com/30"
             alt="User Avatar"
             className="avatar"
-          />
+          /> */}
         </div>
       </div>
     );

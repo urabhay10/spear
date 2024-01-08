@@ -36,7 +36,8 @@ const contentSchema = new mongoose.Schema({
     uniqueId: {
         type: String,
         required: true,
-        default: ""
+        default: "",
+        unique: true
     },
     content: {
         type: String,
