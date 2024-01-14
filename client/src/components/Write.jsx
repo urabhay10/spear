@@ -3,9 +3,9 @@ import { Navigate } from 'react-router-dom'
 import TextEditor from './TextEditor'
 import Navbar from './Navbar'
 import StoryBoard from './StoryBoard'
-import ActivityBar from './ActivityBar'
 import GrammarBoard from './GrammarBoard'
 import AIChat from './AIChat'
+import ActivityBarHorizontal from './ActivityBarHorizontal'
 
 export default class Write extends Component {
     constructor(props) {
@@ -24,7 +24,8 @@ export default class Write extends Component {
             genre: '',
             loading: true,
             user: '',
-            redirect: false
+            redirect: false,
+            alignment: 'left',
         };
     }
     createNovel = async () => {
@@ -47,6 +48,9 @@ export default class Write extends Component {
         } catch (error) {
             console.error('Error:', error);
         }
+    }
+    setAlign = (align) => {
+        this.setState({ alignment: align })
     }
     setText = (text) => {
         const { activeChapter, chapters } = this.state;
@@ -213,10 +217,12 @@ export default class Write extends Component {
                         user={this.state.user}
                         createNovel={this.createNovel}
                     />
-                    <ActivityBar
+                    <ActivityBarHorizontal
                         getGrammarErrors={this.getGrammarErrors}
                         setActiveBoard={this.setActiveBoard}
                         activeBoard={this.state.activeBoard}
+                        setAlign={this.setAlign}
+                        align={this.state.alignment}
                     />
                     {this.renderExplorer()}
                     {!this.state.loading && this.state.chapters.length && <TextEditor
@@ -227,6 +233,7 @@ export default class Write extends Component {
                         title={this.state.chapters ? this.state.chapters[this.state.activeChapter]?.title : ''}
                         content={this.state.chapters ? this.state.chapters[this.state.activeChapter]?.content : ''}
                         activeBoard={this.state.activeBoard}
+                        alignment={this.state.alignment}
                     />}
                 </div>
             )

@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom'
 import RandomFontSpan from './TitleAnimated'
 import { MdOutlineLogout as LogoutIcon } from "react-icons/md";
 import { MdOutlineEdit as EditIcon } from "react-icons/md";
+import { MdOutlineDelete as DeleteIcon } from "react-icons/md";
 import './css/Profile.css'
 
 export default class Profile extends Component {
@@ -98,32 +99,61 @@ export default class Profile extends Component {
         localStorage.removeItem('token');
         this.setState({ redirect: true });
     }
+    async deleteContent(uniqueId) {
+        try {
+            const response = await fetch('http://localhost:8000/content/delete-content', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    uniqueId: uniqueId
+                }),
+            })
+            const data = await response.json()
+            console.log(data)
+            if (!data) {
+                this.setState({ redirect: true });
+                return;
+            } else {
+                window.location.reload();
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
     async componentDidMount() {
         this.changeFontInterval = setInterval(() => {
             this.setState({
                 randFonts: this.getRandomFonts(),
             });
         }, 350);
-        const response = await fetch('http://localhost:8000/user/profile', {
-            method: 'GET',//change to get for it to work
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `${localStorage.getItem('token')}`
-            }
-        });
-        const data = await response.json();
-        console.log(data)
-        if (!data) {
+        if (!localStorage.getItem('token')) {
             this.setState({ redirect: true });
             return;
         } else {
-            this.setState({ name: data.fullname, contents: data.contents, email: data.email })
-            await this.retrieveContents(data.contents);
-            this.setState({ loading: false });
+            const response = await fetch('http://localhost:8000/user/profile', {
+                method: 'GET',//change to get for it to work
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `${localStorage.getItem('token')}`
+                }
+            });
+            const data = await response.json();
+            console.log(data)
+            if (!data) {
+                this.setState({ redirect: true });
+                return;
+            } else {
+                this.setState({ name: data.fullname, contents: data.contents ? data.contents : [], email: data.email })
+                await this.retrieveContents(data.contents);
+                this.setState({ loading: false });
+            }
+            setInterval(() => {
+                console.log(this.state)
+            }, 5000);
         }
-        setInterval(() => {
-            console.log(this.state)
-        }, 5000);
     }
     componentWillUnmount() {
         clearInterval(this.changeFontInterval);
@@ -196,7 +226,7 @@ export default class Profile extends Component {
                     </div>
 
                     <div style={{ padding: '20px' }}>
-                        {this.state.contents?.map((content, index) => {
+                        {this.state.contents.length && this.state.contents?.map((content, index) => {
                             return (
                                 <div key={index} style={{
                                     backgroundColor: content.type === 'Novel' ? '#ffa500' : '#333333',
@@ -210,37 +240,60 @@ export default class Profile extends Component {
                                     alignItems: 'center'
 
                                 }}>
-                                    <div style={{
-                                        height: 'fit-content',
-                                        fontSize: '1.5em',
-                                        fontFamily: 'Lora',
-                                    }}>{content.title}</div>
-                                    <div style={{
-                                        height: 'fit-content',
-                                        fontSize: '1.2em',
-                                        color: '#111111',
-                                        backgroundColor: '#0000cc',
-                                        padding: '4px',
-                                        borderRadius: '5px',
-                                        cursor: 'pointer'
-                                    }} onClick={async () => {
-                                        const x = await this.getContent(content.uniqueId);
-                                        await this.updateContent(x);
-                                        this.setState({ redirect: true });
-                                    }}>
-                                        <EditIcon style={{
-                                            position: 'relative',
-                                            top: '2px'
-                                        }} />
-                                        Edit</div>
+                                        <div style={{
+                                            height: 'fit-content',
+                                            fontSize: '1.5em',
+                                            fontFamily: 'Lora',
+                                        }}>{content.title}</div>
+                                        <div style={{
+                                            display: 'flex',
+                                            justifyContent: 'right',
+                                            alignItems: 'center',
+                                        }}>
+                                        <div style={{
+                                            height: 'fit-content',
+                                            fontSize: '1.2em',
+                                            color: '#111111',
+                                            backgroundColor: '#0000cc',
+                                            padding: '4px',
+                                            borderRadius: '5px',
+                                            cursor: 'pointer',
+                                            margin: '0 10px'
+                                        }} onClick={async () => {
+                                            const x = await this.getContent(content.uniqueId);
+                                            await this.updateContent(x);
+                                            this.setState({ redirect: true });
+                                        }}>
+                                            <EditIcon style={{
+                                                position: 'relative',
+                                                top: '2px'
+                                            }} />
+                                            Edit</div>
+                                        <div style={{
+                                            height: 'fit-content',
+                                            fontSize: '1.2em',
+                                            color: '#111111',
+                                            backgroundColor: '#cc0033',
+                                            padding: '4px',
+                                            borderRadius: '5px',
+                                            cursor: 'pointer'
+                                        }} onClick={async () => {
+                                            const x = await this.deleteContent(content.uniqueId);
+                                        }}>
+                                            <DeleteIcon style={{
+                                                position: 'relative',
+                                                top: '2px'
+                                            }} />
+                                            Delete</div></div>
                                 </div>
                             );
                         })}
                         <div onClick={this.handleLogout} style={{
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            width: 'fit-content'
                         }}><LogoutIcon style={{
                             position: 'relative',
-                            top: '3px',
+                            top: '3px'
                         }} />Logout</div>
                     </div>
                 </div>

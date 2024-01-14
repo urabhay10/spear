@@ -43,17 +43,17 @@ class TextEditor extends React.Component {
     const { placeholder } = this.state;
     return (
       <div style={{
-        width: this.props.activeBoard === '' ? '96vw' : '80vw',
+        width: this.props.activeBoard === '' ? '100vw' : '80vw',
         position: 'absolute',
-        left: this.props.activeBoard === '' ? '4vw' : '20vw',
-        top: '70px',
+        left: this.props.activeBoard === '' ? '0' : '20vw',
+        top: '100px',
       }}>
         <div style={{ textAlign: 'center', marginBottom: '0', position: 'relative', width: '100%', right: '0px' }}>
           <input
             type="text"
             value={this.props.title}
             onChange={this.handleTitleChange}
-            style={{ fontSize: '1.5em', fontWeight: 'bold', border: 'none', textAlign: 'left', width: '100%', outline: 'none', fontFamily: "'Poppins',sans-serif", }}
+            style={{ fontSize: '1.5em', fontWeight: 'bold', border: 'none', textAlign: 'center', width: '100%', outline: 'none', fontFamily: "'Poppins',sans-serif", }}
           />
         </div>
         <textarea
@@ -76,6 +76,7 @@ class TextEditor extends React.Component {
             backgroundColor: '#333333',
             color: '#ffffff',
             minHeight: '100vh',
+            textAlign: this.props.alignment,
           }}
           className="text-input"
         />

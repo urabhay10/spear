@@ -1,6 +1,6 @@
 import React from 'react';
-import bookIconGrey from '../img/open-book-grey.png';
-import bookIconWhite from '../img/open-book-white.png';
+import bookIconGrey from '../img/open-book-grey.svg';
+import bookIconWhite from '../img/open-book-white.svg';
 import brainIconGrey from '../img/brain-grey.svg';
 import brainIconWhite from '../img/brain-white.svg';
 import grammarIconGrey from '../img/grammar-grey.svg';
@@ -54,7 +54,7 @@ class VerticalBar extends React.Component {
       flexWrap: 'nowrap',
       alignContent: 'flex-start',
       justifyContent: 'flex-start',
-      top: '70px',
+      top: '100px',
       paddingTop: '10px',
     };
 

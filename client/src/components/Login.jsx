@@ -59,6 +59,7 @@ export default class Login extends Component {
             <i style={{ "--clr": "#00ff0a" }}></i>
             <i style={{ "--clr": "#ec8942" }}></i>
             <i style={{ "--clr": "#b4ff72" }}></i>
+            
             <div className="login">
               <h2>Login</h2>
               <div className="inputBx">

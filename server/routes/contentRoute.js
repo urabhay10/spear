@@ -96,6 +96,26 @@ router.post('/get-all-content', jwtMiddleware, async (req, res) => {
     }
 });
 
+router.post('/delete-content', jwtMiddleware, async (req, res) => {
+    try{
+        const uniqueId = req.body.uniqueId;
+        if(!uniqueId){
+            return res.status(404).json({ message: 'Content not found' });
+        }
+        const deletedContent = await Content.deleteOne({uniqueId: uniqueId});
+        const user = await User.findById(req.user._id);
+        const existingIndex = user.contents.findIndex(content => content.uniqueId === uniqueId);
+        if(existingIndex !== -1){
+            user.contents.splice(existingIndex, 1);
+            await user.save();
+        }
+        res.status(200).json(deletedContent);
+    }catch(e){
+        console.error(e);
+        res.status(500).json({ error: 'Content deletion failed' });
+    }
+})
+
 router.post('/create-story', jwtMiddleware, async (req, res) => {
     //10 letter unique id 
     const generatedId = Math.random().toString(36).substring(2, 15);

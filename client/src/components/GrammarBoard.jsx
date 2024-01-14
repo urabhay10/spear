@@ -14,7 +14,7 @@ export default class GrammarBoard extends Component {
                     flexDirection: 'column',
                     alignItems: 'center',
                     display: 'flex',
-                    width: '16vw',
+                    width: '20vw',
                     height: '100vh',
                     backgroundColor: '#000000',
                     color: 'rgb(255, 255, 255)',
@@ -22,9 +22,9 @@ export default class GrammarBoard extends Component {
                     flexWrap: 'nowrap',
                     alignContent: 'flex-start',
                     justifyContent: 'flex-start',
-                    top: '70px',
+                    top: '100px',
                     paddingTop: '10px',
-                    left: '4vw',
+                    left: '0',
                     outline: 'white solid 1px',
                 }}
             >
