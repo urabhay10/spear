@@ -29,10 +29,9 @@ export default class Login extends Component {
     try {
       if(this.state.email === '' || this.state.password.length === '' || this.state.fullname === '') {
         this.setState({ error: true, errormessage: 'Please fill out all fields' });
-        console.log('here')
         return;
       }
-      const response = await fetch('http://localhost:8000/user/register', {
+      const response = await fetch('https://spear-backend-ba92a9024732.herokuapp.com/user/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,9 +1,19 @@
 import React, { Component } from 'react';
 import { FiRefreshCw } from 'react-icons/fi';
+import { TailSpin as Loading } from 'react-loader-spinner';
 
 export default class GrammarBoard extends Component {
-    handleRefresh = () => {
-        this.props.getGrammarErrors();
+    constructor(props) {
+        super(props);
+        this.state = {
+            loading: false,
+        };
+    }
+
+    handleRefresh = async  () => {
+        this.setState({ loading: true });
+        await this.props.getGrammarErrors();
+        this.setState({ loading: false });
     }
     
     render() {
@@ -14,7 +24,7 @@ export default class GrammarBoard extends Component {
                     flexDirection: 'column',
                     alignItems: 'center',
                     display: 'flex',
-                    width: '20vw',
+                    width: window.innerWidth<768?'100vw':"20vw",
                     height: '100vh',
                     backgroundColor: '#000000',
                     color: 'rgb(255, 255, 255)',
@@ -22,7 +32,7 @@ export default class GrammarBoard extends Component {
                     flexWrap: 'nowrap',
                     alignContent: 'flex-start',
                     justifyContent: 'flex-start',
-                    top: '100px',
+                    top: '40px',
                     paddingTop: '10px',
                     left: '0',
                     outline: 'white solid 1px',
@@ -56,7 +66,8 @@ export default class GrammarBoard extends Component {
                         }}
                         onClick={this.handleRefresh}
                     >
-                        <FiRefreshCw size={20} />
+                        {!this.state.loading && <FiRefreshCw size={19} color="#FF8C00"/>}
+                        {this.state.loading && <Loading type="TailSpin" color="#FF8C00" height={20} width={20} />}
                     </div>
                 </div>
                 <div style={{

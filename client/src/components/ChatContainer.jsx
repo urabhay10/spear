@@ -12,7 +12,7 @@ export default class ChatContainer extends Component {
         return (
             <div style={{
                 backgroundColor: this.props.prompt?'yellow':'blue',
-                width: '15.8vw',
+                width: window.innerWidth>=768?'15.8vw':'78vw',
                 height: 'fit-content',
                 outline: 'white solid 0.1vw',
                 margin: '0.1vw',

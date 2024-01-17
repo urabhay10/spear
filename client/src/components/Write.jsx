@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Navigate } from 'react-router-dom'
 import TextEditor from './TextEditor'
-import Navbar from './Navbar'
 import StoryBoard from './StoryBoard'
 import GrammarBoard from './GrammarBoard'
 import AIChat from './AIChat'
@@ -12,7 +11,7 @@ export default class Write extends Component {
         super(props);
         this.state = {
             correctedText: '',
-            activeBoard: 'story',
+            activeBoard: window.innerWidth<768?'':'story',
             correctedHtml: <></>,
             activeChapter: 0,
             title: '',
@@ -25,13 +24,13 @@ export default class Write extends Component {
             loading: true,
             user: '',
             redirect: false,
-            alignment: 'left',
+            alignment: 'center',
         };
     }
     createNovel = async () => {
         try {
             this.setState({ loading: true })
-            const response = await fetch('http://localhost:8000/content/create-novel/', {
+            const response = await fetch('https://spear-backend-ba92a9024732.herokuapp.com/content/create-novel/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -42,7 +41,6 @@ export default class Write extends Component {
                 }),
             })
             const data = await response.json()
-            console.log(data)
             this.setState({ title: data.title, chapters: data.chapters, type: data.type, uniqueId: data.uniqueId, content: data.content, description: data.description, genre: data.genre })
             this.setState({ loading: false })
         } catch (error) {
@@ -80,11 +78,10 @@ export default class Write extends Component {
         this.setState({ title: title })
     }
     getGrammarErrors = async () => {
-        console.log('checking grammar');
         if (this.state.chapters.length > this.state.activeChapter) {
             let text = this.state.chapters[this.state.activeChapter].content
             try {
-                const response = await fetch('http://localhost:8000/grammar/', {
+                const response = await fetch('https://spear-backend-ba92a9024732.herokuapp.com/grammar/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -94,8 +91,6 @@ export default class Write extends Component {
                     }),
                 });
                 const data = await response.json();
-                console.log(text);
-                console.log(data);
                 const rightText = await this.filterText(text, data)
                 this.setState({ correctedText: rightText });
             } catch (error) {
@@ -113,11 +108,10 @@ export default class Write extends Component {
             const Text2 = rightText.substring(endPos + 1)
             rightText = Text1 + suggestion + Text2
         }
-        console.log("righttext:" + rightText);
         return rightText
     }
     renderExplorer() {
-        const { activeBoard, uniqueId, chapters, activeChapter, title, genre, correctedText } = this.state;
+        const { activeBoard, uniqueId, chapters, activeChapter, title, genre, correctedText,user } = this.state;
 
         switch (activeBoard) {
             case 'story':
@@ -131,6 +125,8 @@ export default class Write extends Component {
                         addChapter={this.addChapter}
                         deleteChapter={this.deleteChapter}
                         changeMainTitle={this.changeHeadTitle}
+                        user={user}
+                        createNovel={this.createNovel}
                     />
                 ) : null;
 
@@ -138,7 +134,10 @@ export default class Write extends Component {
                 return <GrammarBoard correctedText={correctedText} getGrammarErrors={this.getGrammarErrors} setText={this.setText} text={chapters ? chapters[activeChapter]?.content : ''} />;
 
             case 'ai':
-                return <AIChat />;
+                return <AIChat 
+                    title={this.state.chapters[this.state.activeChapter]?.title}
+                    content={this.state.chapters[this.state.activeChapter]?.content}
+                />;
 
             default:
                 return null;
@@ -156,7 +155,7 @@ export default class Write extends Component {
                 return;
             }
             else {
-                const response = await fetch('http://localhost:8000/user/profile', {
+                const response = await fetch('https://spear-backend-ba92a9024732.herokuapp.com/user/profile', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -169,7 +168,7 @@ export default class Write extends Component {
             setTimeout(async () => {
                 const params = { uniqueId: this.state.uniqueId }
                 const Query = new URLSearchParams(Object.entries(params)).toString();
-                const response = await fetch(`http://localhost:8000/content/get-content/?${Query}`, {
+                const response = await fetch(`https://spear-backend-ba92a9024732.herokuapp.com/content/get-content/?${Query}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -177,16 +176,14 @@ export default class Write extends Component {
                     },
                 })
                 const data = await response.json()
-                console.log(data)
                 if (data.message === 'Content not found' || data.error === 'Content retrieval failed') {
-                    console.log('unable to get the content')
                     this.setState({ loading: false })
                 } else {
                     this.setState({ title: data.title, chapters: data.chapters, type: data.type, uniqueId: data.uniqueId, content: data.content, description: data.description, genre: data.genre })
                     this.setState({ loading: false })
                 }
                 setInterval(async () => {
-                    await fetch('http://localhost:8000/content/update-novel/', {
+                    await fetch('https://spear-backend-ba92a9024732.herokuapp.com/content/update-novel/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -209,34 +206,75 @@ export default class Write extends Component {
         }
     }
     render() {
-        if (this.state.redirect) { return <Navigate to="/login" /> } else {
+        if (this.state.redirect) {
+            return <Navigate to="/login" />;
+        } else {
             return (
                 <div>
-                    <Navbar
-                        loading={this.state.loading}
-                        user={this.state.user}
-                        createNovel={this.createNovel}
-                    />
+                    {!this.state.loading && this.state.uniqueId==='' && (
+                        <div
+                            style={{
+                                position: "fixed",
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                backgroundColor: "rgba(255, 181, 0, 0.5)",
+                                zIndex: -9999,
+                            }}
+                        >
+                            <button
+                                onClick={() => {this.createNovel()}}
+                                style={{
+                                    backgroundColor: "blue",
+                                    color: "white",
+                                    padding: "10px",
+                                    borderRadius: "5px",
+                                    cursor: "pointer",
+                                    border: 'none'
+                                }}
+                            >
+                                You have no novel opened right now, click here to make one
+                            </button>
+                        </div>
+                    )}
+
                     <ActivityBarHorizontal
                         getGrammarErrors={this.getGrammarErrors}
                         setActiveBoard={this.setActiveBoard}
                         activeBoard={this.state.activeBoard}
                         setAlign={this.setAlign}
                         align={this.state.alignment}
+                        loading={this.state.loading}
                     />
                     {this.renderExplorer()}
-                    {!this.state.loading && this.state.chapters.length && <TextEditor
-                        setText={this.setText}
-                        setTitle={this.setTitle}
-                        text={this.state.chapters[this.state.activeChapter]?.content}
-                        correctedText={this.state.correctedText}
-                        title={this.state.chapters ? this.state.chapters[this.state.activeChapter]?.title : ''}
-                        content={this.state.chapters ? this.state.chapters[this.state.activeChapter]?.content : ''}
-                        activeBoard={this.state.activeBoard}
-                        alignment={this.state.alignment}
-                    />}
+                    {!this.state.loading &&
+                        (this.state.activeBoard === "" || window.innerWidth >= 768) &&
+                        this.state.chapters.length && (
+                            <TextEditor
+                                setText={this.setText}
+                                setTitle={this.setTitle}
+                                text={this.state.chapters[this.state.activeChapter]?.content}
+                                correctedText={this.state.correctedText}
+                                title={
+                                    this.state.chapters
+                                        ? this.state.chapters[this.state.activeChapter]?.title
+                                        : ""
+                                }
+                                content={
+                                    this.state.chapters
+                                        ? this.state.chapters[this.state.activeChapter]?.content
+                                        : ""
+                                }
+                                activeBoard={this.state.activeBoard}
+                                alignment={this.state.alignment}
+                            />
+                        )}
                 </div>
-            )
+            );
         }
     }
 }

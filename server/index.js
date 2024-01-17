@@ -10,7 +10,7 @@ const grammarRoutes = require('./routes/grammarRoute');
 const bardRoutes = require('./routes/bardRoute');
 const userRoutes = require('./routes/userRoute');
 const contentRoutes = require('./routes/contentRoute');
-const session = require('express-session');
+const session = require('cookie-session');
 const passport = require('passport');
 const server = require('http').createServer(app);
 
@@ -30,7 +30,7 @@ passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
 
 
-mongoose.connect('mongodb://127.0.0.1:27017/spear')
+mongoose.connect(process.env.MONGODB_URL)
 
 app.use('/grammar', grammarRoutes);
 app.use('/ai', bardRoutes);
@@ -42,7 +42,7 @@ app.use((error, req, res, next) => {
   res.status(error.status || 500).json({ error: error.message || 'Internal Server Error' });
 });
 
-const port = 8000;
+const port = process.env.PORT || 8000;
 
 server.listen(port, () => {
   console.log(`The server is running at ${port}`)

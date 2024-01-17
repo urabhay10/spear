@@ -37,7 +37,7 @@ export default class Profile extends Component {
         ]
     }
     async retrieveContents(contents) {
-        const response = await fetch('http://localhost:8000/content/get-all-content', {
+        const response = await fetch('https://spear-backend-ba92a9024732.herokuapp.com/content/get-all-content', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -47,12 +47,10 @@ export default class Profile extends Component {
             })
         });
         const data = await response.json();
-        console.log(data)
         if (!data) {
             this.setState({ redirect: true });
             return;
         } else {
-            console.log(data)
             this.setState({ contents: data })
         }
     }
@@ -60,7 +58,7 @@ export default class Profile extends Component {
         try {
             const params = { uniqueId: uniqueId }
             const Query = new URLSearchParams(Object.entries(params)).toString();
-            const response = await fetch(`http://localhost:8000/content/get-content/?${Query}`, {
+            const response = await fetch(`https://spear-backend-ba92a9024732.herokuapp.com/content/get-content/?${Query}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -75,7 +73,7 @@ export default class Profile extends Component {
     }
     async updateContent(content) {
         try {
-            await fetch('http://localhost:8000/content/update-novel/', {
+            await fetch('https://spear-backend-ba92a9024732.herokuapp.com/content/update-novel/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -101,7 +99,7 @@ export default class Profile extends Component {
     }
     async deleteContent(uniqueId) {
         try {
-            const response = await fetch('http://localhost:8000/content/delete-content', {
+            const response = await fetch('https://spear-backend-ba92a9024732.herokuapp.com/content/delete-content', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -112,7 +110,6 @@ export default class Profile extends Component {
                 }),
             })
             const data = await response.json()
-            console.log(data)
             if (!data) {
                 this.setState({ redirect: true });
                 return;
@@ -133,7 +130,7 @@ export default class Profile extends Component {
             this.setState({ redirect: true });
             return;
         } else {
-            const response = await fetch('http://localhost:8000/user/profile', {
+            const response = await fetch('https://spear-backend-ba92a9024732.herokuapp.com/user/profile', {
                 method: 'GET',//change to get for it to work
                 headers: {
                     'Content-Type': 'application/json',
@@ -141,7 +138,6 @@ export default class Profile extends Component {
                 }
             });
             const data = await response.json();
-            console.log(data)
             if (!data) {
                 this.setState({ redirect: true });
                 return;
@@ -150,9 +146,6 @@ export default class Profile extends Component {
                 await this.retrieveContents(data.contents);
                 this.setState({ loading: false });
             }
-            setInterval(() => {
-                console.log(this.state)
-            }, 5000);
         }
     }
     componentWillUnmount() {
@@ -225,69 +218,89 @@ export default class Profile extends Component {
                         }}>{this.state.email}</div>
                     </div>
 
-                    <div style={{ padding: '20px' }}>
-                        {this.state.contents.length && this.state.contents?.map((content, index) => {
-                            return (
-                                <div key={index} style={{
-                                    backgroundColor: content.type === 'Novel' ? '#ffa500' : '#333333',
-                                    padding: '20px',
-                                    marginBottom: '20px',
-                                    borderRadius: '5px',
-                                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                                    color: '#eeeeee',
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center'
+                        <div style={{ padding: '20px' }}>
+                            {this.state.contents.length>0 && Array.isArray(this.state.contents) && this.state.contents.map((content, index) => {
+                                return (
+                                    <div key={index} style={{
+                                        backgroundColor: content.type === 'Novel' ? '#ffa500' : '#333333',
+                                        padding: '20px',
+                                        marginBottom: '20px',
+                                        borderRadius: '5px',
+                                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                                        color: '#eeeeee',
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center'
 
-                                }}>
-                                        <div style={{
-                                            height: 'fit-content',
-                                            fontSize: '1.5em',
-                                            fontFamily: 'Lora',
-                                        }}>{content.title}</div>
-                                        <div style={{
-                                            display: 'flex',
-                                            justifyContent: 'right',
-                                            alignItems: 'center',
-                                        }}>
-                                        <div style={{
-                                            height: 'fit-content',
-                                            fontSize: '1.2em',
-                                            color: '#111111',
-                                            backgroundColor: '#0000cc',
-                                            padding: '4px',
-                                            borderRadius: '5px',
-                                            cursor: 'pointer',
-                                            margin: '0 10px'
-                                        }} onClick={async () => {
-                                            const x = await this.getContent(content.uniqueId);
-                                            await this.updateContent(x);
-                                            this.setState({ redirect: true });
-                                        }}>
-                                            <EditIcon style={{
-                                                position: 'relative',
-                                                top: '2px'
-                                            }} />
-                                            Edit</div>
-                                        <div style={{
-                                            height: 'fit-content',
-                                            fontSize: '1.2em',
-                                            color: '#111111',
-                                            backgroundColor: '#cc0033',
-                                            padding: '4px',
-                                            borderRadius: '5px',
-                                            cursor: 'pointer'
-                                        }} onClick={async () => {
-                                            const x = await this.deleteContent(content.uniqueId);
-                                        }}>
-                                            <DeleteIcon style={{
-                                                position: 'relative',
-                                                top: '2px'
-                                            }} />
-                                            Delete</div></div>
-                                </div>
-                            );
-                        })}
+                                    }}>
+                                            <div style={{
+                                                height: 'fit-content',
+                                                fontSize: '1.5em',
+                                                fontFamily: 'Lora',
+                                            }}>{content.title}</div>
+                                            <div style={{
+                                                display: 'flex',
+                                                justifyContent: 'right',
+                                                alignItems: 'center',
+                                            }}>
+                                            <div style={{
+                                                height: 'fit-content',
+                                                fontSize: '1.2em',
+                                                color: '#111111',
+                                                backgroundColor: '#0000cc',
+                                                padding: '4px',
+                                                borderRadius: '5px',
+                                                cursor: 'pointer',
+                                                margin: '0 10px'
+                                            }} onClick={async () => {
+                                                const x = await this.getContent(content.uniqueId);
+                                                await this.updateContent(x);
+                                                this.setState({ redirect: true });
+                                            }}>
+                                                <EditIcon style={{
+                                                    position: 'relative',
+                                                    top: '2px'
+                                                }} />
+                                                Edit</div>
+                                            <div style={{
+                                                height: 'fit-content',
+                                                fontSize: '1.2em',
+                                                color: '#111111',
+                                                backgroundColor: '#cc0033',
+                                                padding: '4px',
+                                                borderRadius: '5px',
+                                                cursor: 'pointer'
+                                            }} onClick={async () => {
+                                                await this.deleteContent(content.uniqueId);
+                                            }}>
+                                                <DeleteIcon style={{
+                                                    position: 'relative',
+                                                    top: '2px'
+                                                }} />
+                                                Delete</div></div>
+                                    </div>
+                                );
+                            })}
+                        {
+                            this.state.contents.length === 0 && this.state.contents.length!==undefined && <div style={{
+                                backgroundColor: '#ffa500',
+                                padding: '20px',
+                                marginBottom: '20px',
+                                borderRadius: '5px',
+                                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                                color: '#eeeeee',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center'
+
+                            }}>
+                                <div style={{
+                                    height: 'fit-content',
+                                    fontSize: '1.5em',
+                                    fontFamily: 'Lora',
+                                }}>No content found</div>
+                            </div>
+                        }
                         <div onClick={this.handleLogout} style={{
                             cursor: 'pointer',
                             width: 'fit-content'

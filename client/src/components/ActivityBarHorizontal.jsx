@@ -11,6 +11,9 @@ import alignLeftGrey from '../img/align-left-grey.svg';
 import alignLeftWhite from '../img/align-left-white.svg';
 import alignRightGrey from '../img/align-right-grey.svg';
 import alignRightWhite from '../img/align-right-white.svg';
+import RandomFontSpan from './TitleAnimated';
+import spear from '../img/spear.webp';
+import {Watch as Loading} from 'react-loader-spinner'
 
 export default class ActivityBarHorizontal extends Component {
     constructor(props) {
@@ -20,12 +23,31 @@ export default class ActivityBarHorizontal extends Component {
             tabsUnactive: [bookIconGrey, brainIconGrey, grammarIconGrey],
             tabsActive: [bookIconWhite, brainIconWhite, grammarIconWhite],
             isClickPending: false,
-            activeAlign: 0,
+            activeAlign: 1,
             alignUnactive: [alignLeftGrey, alignCenterGrey, alignRightGrey],
             alignActive: [alignLeftWhite, alignCenterWhite, alignRightWhite],
+            randFonts: this.getRandomFonts(),
+            isLoading: true
         };
     }
+    fonts = [
+        'Kirang Haerang',
+        'Indie Flower',
+        'Rye',
+        'Amatic SC',
+        'Bangers',
+        'Fredericka the Great'
+    ];
 
+    getRandomFonts() {
+        return [
+            this.fonts[Math.floor(Math.random() * this.fonts.length)],
+            this.fonts[Math.floor(Math.random() * this.fonts.length)],
+            this.fonts[Math.floor(Math.random() * this.fonts.length)],
+            this.fonts[Math.floor(Math.random() * this.fonts.length)],
+            this.fonts[Math.floor(Math.random() * this.fonts.length)],
+        ];
+    }
     handleTabClick = (index) => {
         if (this.state.isClickPending) {
             return;
@@ -59,28 +81,51 @@ export default class ActivityBarHorizontal extends Component {
         }
         this.setState({ activeAlign: index });
     }
-
+    componentDidMount() {
+        this.changeFontInterval = setInterval(() => {
+            this.setState({
+                randFonts: this.getRandomFonts(),
+            });
+        }, 350);
+    }
+    componentDidUpdate(prevProps) {
+        if (prevProps.loading === true) {
+            if (this.props.loading === false) {
+                clearInterval(this.changeFontInterval);
+                this.setState({
+                    isLoading: false,
+                    randFonts: [
+                        'inherit',
+                        'inherit',
+                        'inherit',
+                        'inherit',
+                        'inherit'
+                    ]
+                })
+            }
+        }
+    }
     render() {
         const verticalBarStyle = {
             flexDirection: 'row',
             alignItems: 'center',
             display: 'flex',
             width: '100vw',
-            height: '30px',
+            height: '40px',
             backgroundColor: '#000000',
             color: 'rgb(255, 255, 255)',
             position: 'fixed',
             flexWrap: 'nowrap',
             alignContent: 'center',
             justifyContent: 'space-around',
-            top: '70px',
+            top: '0px',
             zIndex: '100',
         };
 
         return (
             <>
                 <div style={verticalBarStyle}>
-                    
+                
                     {this.state.tabsActive.map((tab, index) => {
                         return (
                             <div
@@ -100,6 +145,25 @@ export default class ActivityBarHorizontal extends Component {
                             </div>
                         );
                     })}
+                    {
+                        window.innerWidth>768 && this.state.randFonts.map((font, index) => {
+                            return <RandomFontSpan key={index} fontFamily={font} text={"SPEAR"[index]} />
+                        })
+                    }
+                    {
+                        window.innerWidth<=768 &&  this.props.loading && <div style={{
+                            position: 'relative',
+                            top: '0',
+                        }}><Loading height={30} color='orange'/></div>
+                    }
+                    {
+                        window.innerWidth<=768 && !this.props.loading && <img alt='' src={spear} style={{
+                            height: '80%',
+                            margin: '0% 10%',
+                            backgroundColor: 'transparent',
+                            top: "0"
+                        }}/>
+                    }
                     <div
                         onClick={() => this.handleAlignClick(0)}
                         style={{
@@ -110,7 +174,7 @@ export default class ActivityBarHorizontal extends Component {
                             alignItems: 'center',
                             cursor: 'pointer',
                             borderLeft: 'none',
-                            marginLeft: '10%',
+                            marginLeft: '5%',
                         }}
                     >
                         <img alt='' src={this.state.activeAlign === 0 ? alignLeftWhite : alignLeftGrey} style={{ height: '80%', width: '80%', margin: '0% 10%', backgroundColor: this.props.align === 'left' ? '#222222' : 'transparent', top: "0" }} />

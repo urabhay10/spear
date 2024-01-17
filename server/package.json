@@ -4,7 +4,8 @@
   "description": "backend to call api and do processing for the spear website",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "author": "Abhay Upadhyay",
   "license": "ISC",
@@ -15,15 +16,19 @@
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
+    "cookie-session": "^2.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "express-session": "^1.17.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.3",
     "passport": "^0.7.0",
     "passport-local-mongoose": "^8.0.0",
     "pro_writing_aid_api": "^2.0.0",
     "uuid": "^9.0.1"
+  },
+  "engines": {
+    "node": "v18.17.1",
+    "npm": "10.2.5"
   }
 }

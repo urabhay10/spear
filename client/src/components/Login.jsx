@@ -25,7 +25,7 @@ export default class Login extends Component {
   }
   async handleLogin() {
     try {
-      const response = await fetch('http://localhost:8000/user/login', {
+      const response = await fetch('https://spear-backend-ba92a9024732.herokuapp.com/user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
