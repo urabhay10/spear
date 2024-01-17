@@ -14,7 +14,7 @@ export default class Login extends Component {
     };
   }
   componentDidMount() {
-    if(localStorage.getItem('token')){
+    if(localStorage.getItem('token') && localStorage.getItem('token')!=='undefined'){
       this.setState({redirect: true})
     }
     document.addEventListener('keydown', (e) => {

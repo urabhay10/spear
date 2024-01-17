@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { TiDeleteOutline as DeleteIcon } from 'react-icons/ti'
+import { MdDeleteForever as DeleteIcon } from "react-icons/md";
 import { FaSquarePlus as Plus } from "react-icons/fa6";
 import { Navigate } from 'react-router-dom';
 
@@ -94,9 +94,10 @@ export default class StoryBoard extends Component {
                                     lineHeight: '100%',
                                     cursor: 'pointer',
                                     width: '20%',
-                                    visibility: this.state.hoveredChp === index ? 'visible' : 'hidden'
+                                    visibility: this.state.hoveredChp === index ? 'visible' : 'hidden',
+                                    bottom: '0'
                                 }}>
-                                <DeleteIcon />
+                                <DeleteIcon size={10}/>
                             </span>
                         </div>
                     )
@@ -110,7 +111,7 @@ export default class StoryBoard extends Component {
                     padding: '5px',
                     marginTop: '10px',
                 }}
-                    onClick={() => addChapter('', '')}
+                    onClick={() => addChapter('Chapter title here', '')}
                 >
                     <span style={{
                         border: 'none',

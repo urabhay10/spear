@@ -64,7 +64,12 @@ export default class Write extends Component {
     }
     addChapter = (title, content) => {
         const { chapters } = this.state;
-        const updatedChapters = [...chapters];
+        let updatedChapters = [];
+        if(chapters){
+            updatedChapters = [...chapters];
+        }else{
+            updatedChapters = []
+        }
         updatedChapters.push({ title, content });
         this.setState({ chapters: updatedChapters, activeChapter: updatedChapters.length - 1 });
     }
@@ -150,7 +155,7 @@ export default class Write extends Component {
     async componentDidMount() {
         try {
             const token = localStorage.getItem('token')
-            if (!token) {
+            if (!token || token === 'undefined') {
                 this.setState({ redirect: true })
                 return;
             }
@@ -166,6 +171,7 @@ export default class Write extends Component {
                 this.setState({ user: data.fullname, uniqueId: data.contents.length > 0 ? data.contents[0].uniqueId :''})
             }
             setTimeout(async () => {
+                console.log(this.state.uniqueId)
                 const params = { uniqueId: this.state.uniqueId }
                 const Query = new URLSearchParams(Object.entries(params)).toString();
                 const response = await fetch(`https://spear-backend-ba92a9024732.herokuapp.com/content/get-content/?${Query}`, {
@@ -179,6 +185,7 @@ export default class Write extends Component {
                 if (data.message === 'Content not found' || data.error === 'Content retrieval failed') {
                     this.setState({ loading: false })
                 } else {
+                    console.log(data)
                     this.setState({ title: data.title, chapters: data.chapters, type: data.type, uniqueId: data.uniqueId, content: data.content, description: data.description, genre: data.genre })
                     this.setState({ loading: false })
                 }
@@ -253,7 +260,7 @@ export default class Write extends Component {
                     {this.renderExplorer()}
                     {!this.state.loading &&
                         (this.state.activeBoard === "" || window.innerWidth >= 768) &&
-                        this.state.chapters.length && (
+                        this.state.chapters?.length && (
                             <TextEditor
                                 setText={this.setText}
                                 setTitle={this.setTitle}

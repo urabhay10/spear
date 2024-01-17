@@ -19,7 +19,7 @@ export default class ActivityBarHorizontal extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            activeTab: 0,
+            activeTab: window.innerWidth<768?-1:0,
             tabsUnactive: [bookIconGrey, brainIconGrey, grammarIconGrey],
             tabsActive: [bookIconWhite, brainIconWhite, grammarIconWhite],
             isClickPending: false,
